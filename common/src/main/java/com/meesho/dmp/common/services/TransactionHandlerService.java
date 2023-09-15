@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
+@Transactional
 public class TransactionHandlerService {
 
     private static final String LOG_PREFIX = "[TransactionHandlerService]";
@@ -28,9 +29,9 @@ public class TransactionHandlerService {
     @Autowired
     private RedisTemplate<String, Long> redisTemplate;
 
-    @Transactional
     public void updateAndSaveAllPricingData(List<ProductPriceDetailEntity> entities) {
 
+        // TODO: handle outside at the caller
 
         for (ProductPriceDetailEntity entity : entities) {
             String uniqueKey = getUniqueKey(entity);
@@ -43,6 +44,8 @@ public class TransactionHandlerService {
         }
 
         List<ProductPriceDetailEntity> savedEntities = productPriceDetailRepository.saveAll(entities);
+
+        // TODO: handle outside at the caller
 
         for (ProductPriceDetailEntity savedEntity : savedEntities) {
             redisTemplate.opsForValue()

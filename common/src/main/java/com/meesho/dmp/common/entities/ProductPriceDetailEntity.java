@@ -33,12 +33,12 @@ public class ProductPriceDetailEntity extends BaseEntity {
     private Long supplierId;
 
     @Column(name = "recommended_price")
-    @Min(value = 50, message = "Recommended price should be at least Rs 50")
+    @Min(value = 1, message = "Recommended price should be at least Rs 1")
     @NotNull
     private double recommendedPrice;
 
     @Column(name = "wdrp_recommended_price")
-    @Min(value = 50, message = "WRDP recommended price should e at least Rs 50")
+    @Min(value = 1, message = "WRDP recommended price should e at least Rs 1")
     @NotNull
     private double wdrpRecommendedPrice;
 

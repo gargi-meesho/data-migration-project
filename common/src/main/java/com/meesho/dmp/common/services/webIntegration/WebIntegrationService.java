@@ -30,6 +30,8 @@ public class WebIntegrationService {
 
     public ResponseEntity<ApiResponse> sendCsvPostRequest(CsvDataPostRequest requestBody) {
         HttpHeaders httpHeaders = createHttpHeaders();
+        // TODO: add slash in the endpoint
+        // TODO: validate the response received from web API
         String apiUrl = BASE_API_URL + "/" + SAVE_PRICING_DATA_ENDPOINT;
         HttpEntity<CsvDataPostRequest> requestEntity = new HttpEntity<>(requestBody, httpHeaders);
 

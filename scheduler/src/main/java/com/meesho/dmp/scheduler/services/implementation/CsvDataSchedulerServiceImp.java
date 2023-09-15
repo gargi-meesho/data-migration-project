@@ -16,10 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -44,20 +42,18 @@ public class CsvDataSchedulerServiceImp implements CsvDataSchedulerService {
 
         try {
             csvDataList = readAllDataFromCsv();
-            ResponseEntity<ApiResponse> response = postDataToWebApi(csvDataList);
-
-            log.info("{} postDataToWebApi success:{}", LOG_PREFIX, response.getBody());
-
-        } catch (CsvReadingException e) {
-            log.error("{} readAllDataFromCsv failed: {}", LOG_PREFIX, ExceptionUtils.getStackTrace(e));
-
-        } catch (HttpServerErrorException e) {
-            log.error("{} postDataToWebApi server error: {}", LOG_PREFIX, ExceptionUtils.getStackTrace(e));
-            produceDataToKafkaTopic(csvDataList);
 
         } catch (Exception e) {
-            log.error("{} fetchAndProcessDataFromCsv failed: {}", LOG_PREFIX, ExceptionUtils.getStackTrace(e));
+            log.error("{} readAllDataFromCsv failed: {}", LOG_PREFIX, ExceptionUtils.getStackTrace(e));
+            return;
+        }
 
+        try {
+            ResponseEntity<ApiResponse> response = postDataToWebApi(csvDataList);
+            log.info("{} postDataToWebApi success:{}", LOG_PREFIX, response.getBody());
+        } catch (Exception e) {
+            log.error("{} postDataToWebApi failed: {}", LOG_PREFIX, ExceptionUtils.getStackTrace(e));
+            produceDataToKafkaTopic(csvDataList);
         }
 
     }
@@ -79,8 +75,8 @@ public class CsvDataSchedulerServiceImp implements CsvDataSchedulerService {
 
             return mappingIterator.readAll();
 
-        } catch (IOException e) {
-            String errorMessage = "Error reading CSV file: " + e.getMessage();
+        } catch (Exception e) {
+            String errorMessage = "Error reading CSV file: " + ExceptionUtils.getStackTrace(e);
             throw new CsvReadingException(errorMessage, e);
         }
 
@@ -91,6 +87,7 @@ public class CsvDataSchedulerServiceImp implements CsvDataSchedulerService {
 
         CsvDataPostRequest requestBody = new CsvDataPostRequest(csvDataList);
         return webIntegrationService.sendCsvPostRequest(requestBody);
+        // TODO: handle response body here and return only responseBody instead of entity
     }
 
     private void produceDataToKafkaTopic(List<CsvData> csvDataList) {

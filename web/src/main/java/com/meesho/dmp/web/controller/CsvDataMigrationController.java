@@ -5,7 +5,6 @@ import com.meesho.dmp.common.entities.ProductPriceDetailEntity;
 import com.meesho.dmp.common.exceptions.NoRecordFoundException;
 import com.meesho.dmp.common.models.ApiResponse;
 import com.meesho.dmp.common.models.CsvDataPostRequest;
-import com.meesho.dmp.web.helpers.CsvDataMigrationHelper;
 import com.meesho.dmp.web.services.CsvDataMigrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +31,11 @@ public class CsvDataMigrationController {
     private static final String LOG_PREFIX = "[CsvDataMigrationController]";
     @Autowired
     private CsvDataMigrationService csvDataMigrationService;
-    @Autowired
-    private CsvDataMigrationHelper csvDataMigrationHelper;
 
     @PostMapping(value = "/save/pricing-data", consumes = "application/json", produces = "application/json")
     public ResponseEntity<ApiResponse<Void>> postCsvData(@Valid @RequestBody CsvDataPostRequest request) {
 
+        // TODO: separate ApiResponse models
 
         List<CsvData> csvDataItems = request.getCsvDataList();
         log.info("{} postCsvData request: {}", LOG_PREFIX, csvDataItems);
@@ -48,6 +46,7 @@ public class CsvDataMigrationController {
 
     }
 
+    // TODO: /fetch/pricing-data
     @GetMapping("/pricing-data")
     public ResponseEntity<ApiResponse<ProductPriceDetailEntity>> getPriceDetails(
             @RequestParam(name = "productId") Long productId,

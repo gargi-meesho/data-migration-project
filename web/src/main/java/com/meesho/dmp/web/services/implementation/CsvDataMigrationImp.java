@@ -20,11 +20,13 @@ public class CsvDataMigrationImp implements CsvDataMigrationService {
 
     @Override
     public void processAndSaveAllData(List<CsvData> csvDataList) {
+        // TODO: Validate the csv data list - not empty
         pricingDataProcessingService.processAndSaveCsvPricingData(csvDataList);
     }
 
     @Override
     public ProductPriceDetailEntity getProductPriceDetails(Long productId, Long supplierId) {
+        // TODO: Validate - null check
         return pricingDataProcessingService.fetchProductPriceDetails(productId, supplierId);
     }
 

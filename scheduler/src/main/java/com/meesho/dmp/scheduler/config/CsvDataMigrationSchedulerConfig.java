@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 @Slf4j
 public class CsvDataMigrationSchedulerConfig {
 
+    //TODO: Check without configuration and name change to cron
     private static final String LOG_PREFIX = "[CsvDataMigrationSchedulerConfig]";
     @Autowired
     private CsvDataSchedulerService csvDataSchedulerService;

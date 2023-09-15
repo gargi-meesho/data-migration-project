@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonPropertyOrder({"id", "product_id", "supplier_id", "recommended_price", "wdrp_recommended_price"})
+@JsonPropertyOrder({"id", "product_id", "supplier_id", "recommended_price", "wdrp_recommended_price"}) // TODO: add
+// comment
 
 public class CsvData {
     @NotNull
