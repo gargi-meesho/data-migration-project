@@ -1,12 +1,14 @@
 package com.meesho.dmp.web.services;
 
 import com.meesho.dmp.common.dto.CsvData;
-import com.meesho.dmp.common.entities.ProductPriceDetailEntity;
+import com.meesho.dmp.common.models.response.CsvDataPostResponse;
+import com.meesho.dmp.common.models.response.ProductPriceDetailGetResponse;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface CsvDataMigrationService {
-    void processAndSaveAllData(List<CsvData> csvDataList);
+    ResponseEntity<CsvDataPostResponse> processAndSaveAllData(List<CsvData> csvDataList);
 
-    ProductPriceDetailEntity getProductPriceDetails(Long productId, Long supplierId);
+    ResponseEntity<ProductPriceDetailGetResponse> getProductPriceDetails(Long productId, Long supplierId);
 }

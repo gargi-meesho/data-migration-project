@@ -5,8 +5,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.meesho.dmp.common.dto.CsvData;
 import com.meesho.dmp.common.exceptions.CsvReadingException;
-import com.meesho.dmp.common.models.ApiResponse;
-import com.meesho.dmp.common.models.CsvDataPostRequest;
+import com.meesho.dmp.common.models.request.CsvDataPostRequest;
+import com.meesho.dmp.common.models.response.CsvDataPostResponse;
 import com.meesho.dmp.common.services.kafka.KafkaProducerService;
 import com.meesho.dmp.common.services.webIntegration.WebIntegrationService;
 import com.meesho.dmp.scheduler.services.CsvDataSchedulerService;
@@ -49,8 +49,9 @@ public class CsvDataSchedulerServiceImp implements CsvDataSchedulerService {
         }
 
         try {
-            ResponseEntity<ApiResponse> response = postDataToWebApi(csvDataList);
-            log.info("{} postDataToWebApi success:{}", LOG_PREFIX, response.getBody());
+            CsvDataPostResponse responseBody = postDataToWebApi(csvDataList);
+            log.info("{} postDataToWebApi success:{}", LOG_PREFIX, responseBody);
+
         } catch (Exception e) {
             log.error("{} postDataToWebApi failed: {}", LOG_PREFIX, ExceptionUtils.getStackTrace(e));
             produceDataToKafkaTopic(csvDataList);
@@ -82,12 +83,13 @@ public class CsvDataSchedulerServiceImp implements CsvDataSchedulerService {
 
     }
 
-    private ResponseEntity<ApiResponse> postDataToWebApi(List<CsvData> csvDataList) {
+    private CsvDataPostResponse postDataToWebApi(List<CsvData> csvDataList) {
         log.info("{} postDataToWebApi data: {}", LOG_PREFIX, csvDataList);
 
         CsvDataPostRequest requestBody = new CsvDataPostRequest(csvDataList);
-        return webIntegrationService.sendCsvPostRequest(requestBody);
-        // TODO: handle response body here and return only responseBody instead of entity
+        ResponseEntity<CsvDataPostResponse> response = webIntegrationService.sendCsvPostRequest(requestBody);
+
+        return response.getBody();
     }
 
     private void produceDataToKafkaTopic(List<CsvData> csvDataList) {

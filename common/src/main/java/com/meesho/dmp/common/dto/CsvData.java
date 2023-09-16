@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonPropertyOrder({"id", "product_id", "supplier_id", "recommended_price", "wdrp_recommended_price"}) // TODO: add
-// comment
+// JsonPropertyOrder required for one-to-one mapping with CSV file header
+@JsonPropertyOrder({"id", "product_id", "supplier_id", "recommended_price", "wdrp_recommended_price"})
 
 public class CsvData {
     @NotNull

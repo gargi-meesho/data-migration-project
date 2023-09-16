@@ -3,7 +3,7 @@ package com.meesho.dmp.consumer.services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meesho.dmp.common.dto.CsvData;
-import com.meesho.dmp.common.services.PricingDataService;
+import com.meesho.dmp.common.services.dmp.PricingDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;

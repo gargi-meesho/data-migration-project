@@ -1,4 +1,4 @@
-package com.meesho.dmp.common.models;
+package com.meesho.dmp.common.models.request;
 
 import com.meesho.dmp.common.dto.CsvData;
 import lombok.AllArgsConstructor;

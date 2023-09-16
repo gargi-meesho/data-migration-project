@@ -1,4 +1,4 @@
-package com.meesho.dmp.common.models;
+package com.meesho.dmp.common.models.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,12 +7,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class ApiResponse<T> {
-    private boolean success;
+public class ErrorResponse {
+    private final boolean success = false;
     private HttpStatus status;
-    private String message;
-    private T data;
+    private String errors;
 }

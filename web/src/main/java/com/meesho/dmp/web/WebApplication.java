@@ -11,8 +11,8 @@ import org.springframework.context.annotation.FilterType;
         excludeFilters = @ComponentScan.Filter(
                 type = FilterType.ASPECTJ,
                 pattern = {
-                        "com.meesho.dmp.common.config.kafka.*",
-                        "com.meesho.dmp.common.services.kafka.*"
+                        "com.meesho.dmp.common.config.kafka..*",
+                        "com.meesho.dmp.common.services.kafka..*"
                 }
         )
 )

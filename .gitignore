@@ -36,3 +36,4 @@ build/
 .DS_Store
 **/.DS_Store
 dmp-diagram.png
+/data/

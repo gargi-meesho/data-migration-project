@@ -1,6 +1,6 @@
 package com.meesho.dmp.common.exceptions;
 
-import com.meesho.dmp.common.models.ApiResponse;
+import com.meesho.dmp.common.models.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hibernate.exception.JDBCConnectionException;
@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import static com.meesho.dmp.common.utils.CommonUtils.createApiResponse;
+import static com.meesho.dmp.common.utils.CommonUtils.createErrorResponse;
 
 @RestControllerAdvice
 @Slf4j
@@ -29,7 +29,7 @@ public class RestApiExceptionHandler {
     private static final String LOG_PREFIX = "[RestApiExceptionHandler]";
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleAllExceptions(Exception exception, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleAllExceptions(Exception exception, WebRequest request) {
         log.info("Request: {}", request);
 
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -56,11 +56,11 @@ public class RestApiExceptionHandler {
         message = String.format("%s: %s", message, exception.getMessage());
 
         log.error("{} {}: {}", LOG_PREFIX, message, ExceptionUtils.getStackTrace(exception));
-        return createApiResponse(false, status, message);
+        return createErrorResponse(status, message);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ApiResponse<Void>> handleConstraintViolationException(
+    public ResponseEntity<ErrorResponse> handleConstraintViolationException(
             ConstraintViolationException exception) {
 
         Map<String, Object> errors = new HashMap<>();
@@ -76,16 +76,16 @@ public class RestApiExceptionHandler {
         String message = "Constraint violation error: " + errors;
         log.error("{} {}: {}", LOG_PREFIX, message, ExceptionUtils.getStackTrace(exception));
 
-        return createApiResponse(false, HttpStatus.BAD_REQUEST, message);
+        return createErrorResponse(HttpStatus.BAD_REQUEST, message);
     }
 
     @ExceptionHandler(NoRecordFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleNoRecordFoundException(
+    public ResponseEntity<ErrorResponse> handleNoRecordFoundException(
             NoRecordFoundException exception) {
 
         String message = exception.getMessage();
         log.error("{} {}: {}", LOG_PREFIX, message, ExceptionUtils.getStackTrace(exception));
 
-        return createApiResponse(false, HttpStatus.BAD_REQUEST, message);
+        return createErrorResponse(HttpStatus.BAD_REQUEST, message);
     }
 }
