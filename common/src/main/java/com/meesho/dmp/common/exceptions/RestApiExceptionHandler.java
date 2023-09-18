@@ -8,6 +8,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -48,7 +49,8 @@ public class RestApiExceptionHandler {
             message = "Resource not found";
 
         } else if (exception instanceof HttpMessageNotReadableException
-                || exception instanceof IllegalArgumentException) {
+                || exception instanceof IllegalArgumentException
+                || exception instanceof MethodArgumentNotValidException) {
             status = HttpStatus.BAD_REQUEST;
             message = "Invalid request";
 

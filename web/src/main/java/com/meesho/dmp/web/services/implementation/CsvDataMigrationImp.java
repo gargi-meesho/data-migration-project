@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,8 +30,8 @@ public class CsvDataMigrationImp implements CsvDataMigrationService {
 
     @Override
     public ResponseEntity<CsvDataPostResponse> processAndSaveAllData(List<CsvData> csvDataList) {
-        if (csvDataList.isEmpty()) {
-            throw new IllegalArgumentException("List of CSV data must be non-null");
+        if (CollectionUtils.isEmpty(csvDataList)) {
+            throw new IllegalArgumentException("List of CSV data must be non-null and non-empty");
         }
         pricingDataProcessingService.processAndSaveCsvPricingData(csvDataList);
 

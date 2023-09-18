@@ -21,26 +21,26 @@ import javax.validation.constraints.NotNull;
 public class ProductPriceDetailEntity extends BaseEntity {
 
     @Column(name = "ref_id")
-    @NotNull
+    @NotNull(message = "id cannot be null")
     private Long refId;
 
     @Column(name = "product_id")
-    @NotNull
+    @NotNull(message = "productId cannot be null")
     private Long productId;
 
     @Column(name = "supplier_id")
-    @NotNull
+    @NotNull(message = "supplierId cannot be null")
     private Long supplierId;
 
     @Column(name = "recommended_price")
     @Min(value = 1, message = "Recommended price should be at least Rs 1")
-    @NotNull
-    private double recommendedPrice;
+    @NotNull(message = "recommendedPrice cannot be null")
+    private Double recommendedPrice;
 
     @Column(name = "wdrp_recommended_price")
     @Min(value = 1, message = "WRDP recommended price should e at least Rs 1")
-    @NotNull
-    private double wdrpRecommendedPrice;
+    @NotNull(message = "wdrpRecommendedPrice cannot be null")
+    private Double wdrpRecommendedPrice;
 
     @AssertTrue(message = "WRDP recommended price must be less than the recommended price")
     public boolean isValidWrdpRecommendedPrice() {

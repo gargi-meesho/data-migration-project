@@ -18,7 +18,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.meesho.dmp.scheduler.constants.Constants.CSV_BATCH_SIZE;
 
 @Service
 @Slf4j
@@ -38,31 +41,15 @@ public class CsvDataSchedulerServiceImp implements CsvDataSchedulerService {
     @Override
     public void fetchAndProcessDataFromCsv() {
 
-        List<CsvData> csvDataList = null;
-
         try {
-            csvDataList = readAllDataFromCsv();
-
+            readAllDataFromCsvInBatch();
         } catch (Exception e) {
-            log.error("{} readAllDataFromCsv failed: {}", LOG_PREFIX, ExceptionUtils.getStackTrace(e));
-            return;
-        }
-
-        try {
-            CsvDataPostResponse responseBody = postDataToWebApi(csvDataList);
-            log.info("{} postDataToWebApi success:{}", LOG_PREFIX, responseBody);
-
-        } catch (Exception e) {
-            log.error("{} postDataToWebApi failed: {}", LOG_PREFIX, ExceptionUtils.getStackTrace(e));
-            produceDataToKafkaTopic(csvDataList);
+            log.error("{} fetchAndProcessDataFromCsv failed: {}", LOG_PREFIX, ExceptionUtils.getStackTrace(e));
         }
 
     }
 
-    private List<CsvData> readAllDataFromCsv() {
-
-        log.info("{} readAllDataFromCsv: {}", LOG_PREFIX, csvFilePath);
-
+    private void readAllDataFromCsvInBatch() {
         try {
             CsvMapper csvMapper = new CsvMapper();
             CsvSchema csvSchema = csvMapper.schemaFor(CsvData.class)
@@ -74,13 +61,43 @@ public class CsvDataSchedulerServiceImp implements CsvDataSchedulerService {
                     .with(csvSchema)
                     .readValues(csvFile);
 
-            return mappingIterator.readAll();
+            List<CsvData> csvDataList = new ArrayList<>();
+            Long processedRecordCount = 0L;
+
+            while (mappingIterator.hasNext()) {
+                try {
+                    CsvData csvData = mappingIterator.next();
+                    csvDataList.add(csvData);
+                    processedRecordCount++;
+
+                } catch (Exception e) {
+                    log.error("{} readAllDataFromCsvInBatch error in processing record no: {}", LOG_PREFIX,
+                              processedRecordCount);
+                }
+
+                if (csvDataList.size() == CSV_BATCH_SIZE || !mappingIterator.hasNext()) {
+                    processCsvDataInBatch(csvDataList);
+                    csvDataList.clear();
+                }
+            }
 
         } catch (Exception e) {
             String errorMessage = "Error reading CSV file: " + ExceptionUtils.getStackTrace(e);
             throw new CsvReadingException(errorMessage, e);
         }
+    }
 
+    private void processCsvDataInBatch(List<CsvData> csvDataList) {
+        log.info("{} processCsvDataInBatch records: {}", LOG_PREFIX, csvDataList);
+
+        try {
+            CsvDataPostResponse responseBody = postDataToWebApi(csvDataList);
+            log.info("{} postDataToWebApi success: {}", LOG_PREFIX, responseBody);
+
+        } catch (Exception e) {
+            log.error("{} postDataToWebApi failed: {}", LOG_PREFIX, ExceptionUtils.getStackTrace(e));
+            produceDataToKafkaTopic(csvDataList);
+        }
     }
 
     private CsvDataPostResponse postDataToWebApi(List<CsvData> csvDataList) {
